@@ -1,0 +1,113 @@
+# Intelligent Slack Knowledge Base (ISKB) 
+
+---
+
+## Attendee Details
+
+**Name:** Mohammed Zain Hassan
+**GitHub Username:** zain22972
+**LinkedIn Profile:** [linkedin.com/in/zainhassan12](https://linkedin.com/in/zainhassan12)
+**GitHub Project Repository:** [https://github.com/zain22972/Zain-Slackmind.git]
+
+---
+
+## Problem Statement Selected
+
+Mention the title of the problem statement you selected.
+
+Choose one:
+
+```txt
+Intelligent Slack Knowledge Base
+
+```
+
+---
+
+## Project Description
+
+The **Intelligent Slack Knowledge Base (ISKB)** is an enterprise closed-domain conversational assistant that runs directly inside Slack DMs and channels. It retrieves grounded answers from ingested corporate files (PDFs, DOCX, TXT), external URLs, and live Slack threads, solving knowledge fragmentation. 
+
+By utilizing dynamic metadata filters at search runtime, the system implements three layers of security scopes (`org`, `team_[channel_id]`, and `private_[user_id]`) to isolate information. Every response features verifiable source citations, and strict prompt constraints prevent hallucinations by outputting a graceful refusal if no context is found.
+
+---
+
+## Approach
+
+1. **Problem Analysis:** Analyzed how institutional knowledge gets locked in static documents and buried in long Slack threads. Traditional search is slow, and generic LLMs are prone to hallucinating proprietary info.
+2. **System Flow Design:** Designed a real-time web control dashboard for admins to manage files/URLs, alongside a Slack webhook gateway that parses mentions and triggers the RAG pipeline.
+3. **Dynamic Scoping:** Constructed runtime ChromaDB filters to map queries dynamically using the incoming Slack webhook payload (`user_id` and `channel_id`), ensuring data privacy.
+4. **AI & Prompt Engineering:** Configured Google Gemini API to power both the auto-tagging agent (categorizing files during upload) and the RAG response generator. Used strict prompt guardrails to guarantee factual alignment and citation footnotes.
+
+---
+
+## Tech Stack and Tools Used
+
+**Frontend:** React (Vite), CSS, Tailwind CSS, Axios
+**Backend:** FastAPI, Uvicorn, Slack Bolt Python SDK, python-dotenv
+**Database:** ChromaDB (Vector Store with SQLite persistent storage)
+**AI Tools/API:** Google Gemini API, LangChain (`langchain-google-genai`, `langchain-chroma`, `langchain-text-splitters`)
+**Other Tools:** Serveo (local SSH tunneling for Slack webhook validation), Git, Cursor
+
+---
+
+## Key Features
+
+1. **Multi-Format Ingestion Engine:** Parses PDFs, TXT, DOCX files, raw URLs, and extracts/embeds entire active Slack threads directly.
+2. **Access Control Scoping:** Isolates search queries dynamically at the database level by matching metadata scopes (`org`, `team_channel`, `private_user`).
+3. **Auto-Tagging Pipeline:** An upload agent powered by Gemini that summarizes documents and attaches 3 keywords to vector metadata for instant indexing.
+4. **Conversational Context Memory:** Maintains a 3-turn memory buffer per user to resolve contextual follow-up questions.
+5. **No-Hallucination & Citations:** Restricts answers strictly to retrieved documents and appends source footnote citations.
+
+---
+
+## What is Working?
+
+- **FastAPI Core REST API:** Uploads, url ingestion, health endpoints, and query pipelines are fully operational.
+- **Slack Bolt Handler:** `@mentions`, `/summarize`, `/ingest-url`, and `/ingest-thread` commands work seamlessly.
+- **Admin Dashboard:** Drag-and-drop file upload, scope configuration, and tabular view of current indexed documents.
+- **Local RAG Pipeline:** Context retrieval, memory, auto-tagging, and generation using `gemini-3.1-flash-lite` and `gemini-embedding-2`.
+
+---
+
+## What is Still in Progress?
+
+- **Pinecone Cloud Integration:** Migrating from local ChromaDB to Pinecone serverless for horizontal scaling.
+- **Multimodal OCR Extraction:** Adding Google Gemini Vision support for scanned PDFs and image media.
+
+---
+
+## Screenshots or Demo
+
+**Deployed Link:** Deployed locally with Serveo SSH forwarding (`serveo.net`).
+**Demo Video Link:** *(To be added during demo presentation)*
+**Screenshots:** *(Dashboard UI and Slack responses to be attached)*
+
+---
+
+## Challenges Faced
+
+- **Gemini Free-Tier Rate Limits:** Hitting RPM quotas during bulk ingestion. Solved by replacing `gemini-3.5-flash` with the lighter, faster `gemini-3.1-flash-lite` model.
+- **LangChain Multi-Document Embedding Bug:** LangChain Google embeddings batching causes an API failure returning only the first vector. Resolved by writing a custom sequential `_BatchSafeEmbeddings` wrapper.
+- **Slack Timeout Limits:** Slack requires webhooks to respond within 3000ms. Solved by separating RAG generation into concurrent thread pools and completing requests efficiently.
+
+---
+
+## Learnings
+
+- Implementing robust CORS middleware to support dynamic port failover on local Vite development servers.
+- Structuring prompt templates and system directives to prevent model drift and hallucinated outputs.
+- Configuring SSH reverse tunnels to safely forward external Slack webhook events to a local dev machine.
+
+---
+
+## Future Improvements
+
+- Automating sync with cloud storage (Google Drive, OneDrive).
+- Adding real-time workspace analytics showing frequently asked questions and knowledge gaps.
+
+---
+
+## Final Note
+
+ISKB bridges the gap between active Slack communication and static documentation, offering a secure, conversational corporate brain that keeps team information accurate, accessible, and grounded.
